@@ -17,6 +17,16 @@ function get_cookie(cname) {
     return "";
 }
 
+function get_query_param(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 /*
  Set cookie
  */
@@ -117,7 +127,7 @@ function register_experiment(options) {
     if (run) {
         var variation = get_variation(options.name+'_'+options.device, options.allocation, options.variations);
 
-        if (variation) {
+        if (variation && (options.mode == 'production' || get_query_param('qa_mode') == 'true')) {
 
             defer(function(){
                 if (options.beforeCallback) options.beforeCallback(options, variation);
