@@ -1,0 +1,16 @@
+{
+  "name": "JS Code Injection",
+  "version": "1.0",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": [ "<all_urls>" ],
+      "js": [ "jquery.js", "background.js" ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    "/console.css",
+    "/injected.js"
+  ]
+}
