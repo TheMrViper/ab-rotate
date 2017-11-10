@@ -50,9 +50,6 @@ function get_variation(experiment_name, allocation, variations) {
     for (var j = 0; j < count; j++) {
         rand -= allocation[j];
 
-        console.log(rand);
-
-
         if (rand <= 0) {
             set_cookie(experiment_name, j, 7);
             return variations[j];
@@ -84,6 +81,17 @@ function change_variation(experiment_name, variation_name, refresh) {
 }
 
 /*
+    Defer function for jquery
+ */
+function defer(method) {
+    if (window.jQuery) {
+        method();
+    } else {
+        setTimeout(function() { defer(method) }, 50);
+    }
+}
+
+/*
  Main function for experiment registration
 
  */
@@ -101,7 +109,7 @@ function register_experiment(options) {
     else if (window.device.mobile() && options.devices.indexOf('MB') !== -1 && !window.device.tablet()) { run = true; options.device = 'MB'; }
     else if (options.devices.indexOf('DT') !== -1) { run = true; options.device = 'DT'; }
 
-    window.experiments = window.experiments || [];
+
     window.experiments[options.name+'_'+options.device] = options;
 
     // if device detected
@@ -109,37 +117,28 @@ function register_experiment(options) {
         var variation = get_variation(options.name+'_'+options.device, options.allocation, options.variations);
 
         if (variation) {
-            options.beforeCallback(variation);
-            variation.callback();
-            options.afterCallback(variation);
+
+            defer(function(){
+                if (options.beforeCallback) options.beforeCallback(options, variation);
+                variation.callback();
+                if (options.afterCallback) options.afterCallback(options, variation);
+            });
 
             console.log('[ROTATOR] Experiment (', options.name+'_'+options.device+'_'+variation.name, ') started');
         }
     }
 }
 
+window.experiments = window.experiments || [];
 
-register_experiment({
-    name: 'TST96',                      // experiment name
-    devices: ['MB', 'TB'],              // experiment device, possible values MB TB DT
-    allocation: [50, 50],               // experiment traffic allocation
-    variations: [{                      // experiment variations
-        name: 'O',                      // variation name
+// start experiment loaded before rotator
+for (var i = 0; i < window.experiments.length; i++) {
+    register_experiment(window.experiments[i]);
+}
 
-        callback: function() {          // variation code here
-            document.write('original');
-        }
-    },{
-        name: 'V1',                     // variation name
+// replace push function for start new experiments
+window.experiments.push = function(e) {
+    register_experiment(e);
+    Array.prototype.push.call(window.experiments, e);
+};
 
-        callback: function() {          // variation code here
-            document.write('variation1');
-        }
-    }],
-    beforeCallback: function(variation) { // callback before variation runs
-        console.log('before')
-    },
-    afterCallback: function(variation) {  // callback after variation runs
-        console.log('after')
-    }
-});

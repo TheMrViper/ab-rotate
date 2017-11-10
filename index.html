@@ -9,5 +9,34 @@
 </head>
 <body>
 
+
+<script>
+
+    register_experiment({
+        name: 'TST96',                      // experiment name
+        devices: ['MB', 'TB'],              // experiment device, possible values MB TB DT
+        allocation: [50, 50],               // experiment traffic allocation
+        variations: [{                      // experiment variations
+            name: 'O',                      // variation name
+
+            callback: function() {          // variation code here
+                document.write('original');
+            }
+        },{
+            name: 'V1',                     // variation name
+
+            callback: function() {          // variation code here
+                document.write('variation1');
+            }
+        }],
+        beforeCallback: function(experiment, variation) { // callback before variation runs
+            console.log('before')
+            console.log(variation)
+        },
+        afterCallback: function(experiment, variation) {  // callback after variation runs
+            console.log(experiment.name+'_'+experiment.device+'_'+variation.name)
+        }
+    });
+</script>
 </body>
 </html>
