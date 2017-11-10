@@ -12,29 +12,37 @@
 
 <script>
 
-    register_experiment({
-        name: 'TST96',                      // experiment name
-        devices: ['MB', 'TB'],              // experiment device, possible values MB TB DT
-        allocation: [50, 50],               // experiment traffic allocation
-        variations: [{                      // experiment variations
-            name: 'O',                      // variation name
+    window.experiments = window.experiments || [];
+    window.experiments.push({
+        name: 'TST100',
+        devices: ['MB', 'TB', 'DT'],
+        allocation: [34, 33, 33],
+        variations: [{
+            name: 'O',
+            callback: function() {
 
-            callback: function() {          // variation code here
-                document.write('original');
             }
         },{
-            name: 'V1',                     // variation name
-
-            callback: function() {          // variation code here
-                document.write('variation1');
+            name: 'V1',
+            callback: function() {
+                $('.main h1:eq(0)').text('The Numbers Are Showing You The Way To Wealth, Abundance, and Success in 2018, Will You Listen?');
+                $('.main .cta-alt:eq(0)').hide();
+            }
+        },{
+            name: 'V2',
+            callback: function() {
+                $('.main h1:eq(0)').text('"Unlock The Power of 11/11" And Discover The Hidden Message For Incredible Abundance In 2018...');
+                $('<h3>').css({'text-align': 'center', 'font-weight': 'bold'}).text('(Hint: Some Signs Are Already Here!)').insertAfter('.main h1:eq(0)');
+                $('.main .cta-alt:eq(0)').hide();
             }
         }],
-        beforeCallback: function(experiment, variation) { // callback before variation runs
-            console.log('before')
-            console.log(variation)
-        },
-        afterCallback: function(experiment, variation) {  // callback after variation runs
-            console.log(experiment.name+'_'+experiment.device+'_'+variation.name)
+        afterCallback: function(experiment, variation) {
+            var variation_name = experiment.name+'_'+experiment.device+'_'+variation.name;
+            window._kmq = window._kmq || [];
+            window._kmq.push(['record', 'Page View', {
+                backend_test_variation: variation_name,
+                TST100_variation: variation_name
+            }]);
         }
     });
 </script>
