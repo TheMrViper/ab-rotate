@@ -1,5 +1,5 @@
 /*
-    Get cookie
+ Get cookie
  */
 function get_cookie(cname) {
     var name = cname + "=";
@@ -18,7 +18,7 @@ function get_cookie(cname) {
 }
 
 /*
-    Set cookie
+ Set cookie
  */
 function set_cookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -28,8 +28,8 @@ function set_cookie(cname, cvalue, exdays) {
 }
 
 /*
-    This function return variation.
-    If user first time on page, take variation by random, else take variation index from cookie
+ This function return variation.
+ If user first time on page, take variation by random, else take variation index from cookie
  */
 function get_variation(experiment_name, allocation, variations) {
 
@@ -42,7 +42,7 @@ function get_variation(experiment_name, allocation, variations) {
 
     var sum = 0;
     for (var i = 0; i < count; i++) {
-       sum += allocation[i];
+        sum += allocation[i];
     }
 
     var rand = Math.floor(Math.random() * 100) + 1;
@@ -61,7 +61,7 @@ function get_variation(experiment_name, allocation, variations) {
 }
 
 /*
-    Function for QA, change variation & refresh page
+ Function for QA, change variation & refresh page
  */
 function change_variation(experiment_name, variation_name, refresh) {
     var experiment = window.experiments[experiment_name];
@@ -84,22 +84,25 @@ function change_variation(experiment_name, variation_name, refresh) {
 }
 
 /*
-    Main function for experiment registration
+ Main function for experiment registration
 
  */
 function register_experiment(options) {
-    window.experiments = window.experiments || [];
-    window.experiments[options.name+'_'+options.device] = options;
-
 
     // Detect device
     var run = false;
     window.device = window.device || new MobileDetect(window.navigator.userAgent);
 
-    if (window.device.tablet() && options.device == 'TB') { run = true; }
-    else if (window.device.mobile() && options.device == 'MB' && !window.device.tablet()) { run = true; }
-    else if (options.device == 'DT') { run = true; }
+    if (typeof options.devices == 'string') {
+        options.devices = [options.devices];
+    }
 
+    if (window.device.tablet() && options.devices.indexOf('TB') !== -1) { run = true; options.device = 'TB'; }
+    else if (window.device.mobile() && options.devices.indexOf('MB') !== -1 && !window.device.tablet()) { run = true; options.device = 'MB'; }
+    else if (options.devices.indexOf('DT') !== -1) { run = true; options.device = 'DT'; }
+
+    window.experiments = window.experiments || [];
+    window.experiments[options.name+'_'+options.device] = options;
 
     // if device detected
     if (run) {
@@ -118,7 +121,7 @@ function register_experiment(options) {
 
 register_experiment({
     name: 'TST96',                      // experiment name
-    device: 'MB',                       // experiment device, possible values MB TB DT
+    devices: ['MB', 'TB'],              // experiment device, possible values MB TB DT
     allocation: [50, 50],               // experiment traffic allocation
     variations: [{                      // experiment variations
         name: 'O',                      // variation name
