@@ -61,7 +61,7 @@ function get_variation(experiment_name, allocation, variations) {
  Function for QA, change variation & refresh page
  */
 function change_variation(experiment_name, variation_name, refresh) {
-    var experiment = window.experiments[experiment_name];
+    var experiment = window.registered_experiments[experiment_name];
 
     if (experiment) {
         for (var i = 0; i < experiment.variations.length; i++) {
@@ -110,7 +110,8 @@ function register_experiment(options) {
     else if (options.devices.indexOf('DT') !== -1) { run = true; options.device = 'DT'; }
 
 
-    window.experiments[options.name+'_'+options.device] = options;
+    window.registered_experiments = window.registered_experiments || [];
+    window.registered_experiments[options.name+'_'+options.device] = options;
 
     // if device detected
     if (run) {
