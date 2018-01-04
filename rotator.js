@@ -117,7 +117,7 @@ function register_experiment(options) {
 
     if (window.device.tablet() && options.devices.indexOf('TB') !== -1) { run = true; options.device = 'TB'; }
     else if (window.device.mobile() && options.devices.indexOf('MB') !== -1 && !window.device.tablet()) { run = true; options.device = 'MB'; }
-    else if (options.devices.indexOf('DT') !== -1) { run = true; options.device = 'DT'; }
+    else if (!window.device.mobile() && options.devices.indexOf('DT') !== -1) { run = true; options.device = 'DT'; }
 
 
     window.registered_experiments = window.registered_experiments || [];
