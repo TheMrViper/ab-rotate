@@ -43,6 +43,11 @@ function set_cookie(cname, cvalue, exdays) {
  */
 function get_variation(experiment_name, allocation, variations) {
 
+    var param_variation_index = get_query_param(experiment_name);
+    if (param_variation_index) {
+        return variations[param_variation_index];
+    }
+ 
     var cookie_variation_index = get_cookie(experiment_name);
     if (cookie_variation_index) {
         return variations[cookie_variation_index];
